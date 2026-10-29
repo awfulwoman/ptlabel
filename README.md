@@ -1,6 +1,6 @@
 # PT label
 
-Batch-print CSV rows and images to Brother PT-E550W/P750W/P710BT label printers as **one job**, so the
+Batch-print CSV rows and images to Brother PT-E550W/P750W label printers as **one job**, so the
 printer doesn't waste a space on every label by printing the little human-friendly leader gap.
 
 Labels are joined by half-cuts — the label layer is cut, the backing stays in one strip — with the
@@ -49,7 +49,7 @@ module is loaded with `lsmod | grep usblp`, and load it with `sudo modprobe usbl
 
 </details>
 
-## Useage
+## Usage
 
 ```sh
 ptlabel status                                   # model, tape width, errors

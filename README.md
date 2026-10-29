@@ -75,6 +75,30 @@ Tape width is read from the printer. Options for both `csv` and `images`:
 `csv` also takes `--font` (env `PTLABEL_FONT`) and `--min-length MM`. `images` takes `--rotate`
 (`auto` turns portrait images so the long side runs along the tape).
 
+## Image sizes
+
+The printer prints 180 dots per inch (about 7.09 per mm), and the dots are square. Make an image's
+**height** the tape's printable width in pixels. Its **width** becomes the label length.
+
+| Tape | Image height | Printable width |
+|---|---|---|
+| 24mm | 128px | ~18mm |
+| 18mm | 112px | ~15.8mm |
+| 12mm | 70px | ~9.9mm |
+| 9mm | 50px | ~7mm |
+| 6mm | 32px | ~4.5mm |
+| 3.5mm | 24px | ~3.4mm |
+
+- **Width:** label length × 7.09. For example, a 50mm label is about 354px wide. The printer allows
+  4.4mm–1m, which is 31–7086px.
+- **Ratio:** on 24mm tape it's label length ÷ 18mm. A square label is 128×128, and a 2:1 label is
+  256×128.
+- **Orientation:** the image's width runs along the tape. With `--rotate auto`, ptlabel turns
+  portrait images so their long side runs along the tape. Use `--rotate none` to keep them upright.
+- **Best results:** use black and white with no anti-aliasing, at exactly the tape's height. Then
+  nothing is scaled or dithered. Bigger images are scaled down and Floyd–Steinberg dithered, so
+  fine detail and greys become dot patterns. Colour is fine, and transparent areas print as white.
+
 ## Local development
 
 ```sh

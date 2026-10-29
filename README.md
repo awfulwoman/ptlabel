@@ -1,13 +1,12 @@
-# ptlabel
+# PT label
 
-Batch-print CSV rows and images to a Brother PT-E550W label printer as **one job**, so the
-printer doesn't waste a ~2.5cm leader (the gap between print head and cutter) on every label.
+Batch-print CSV rows and images to Brother PT-E550W/P750W/P710BT label printers as **one job**, so the
+printer doesn't waste a space on every label by printing the little human-friendly leader gap.
 
 Labels are joined by half-cuts — the label layer is cut, the backing stays in one strip — with the
 printer's minimum 2mm margin either side. Only the first label of a job pays the leader.
 
-Built on [ptouch](https://pypi.org/project/ptouch/) for tape geometry and rasterising. ptlabel adds
-the multi-label job sequence verified on real hardware, a `/dev/usb/lp0` connection, status/progress
+This tool is built on [ptouch](https://pypi.org/project/ptouch/) for tape geometry and rasterising. It adds the multi-label job sequence verified on real hardware, a `/dev/usb/lp0` connection, status/progress
 reading, CSV text rendering and image dithering.
 
 ## Quick Install
@@ -15,6 +14,13 @@ reading, CSV text rendering and image dithering.
 ```sh
 uv tool install git+https://github.com/awfulwoman/ptlabel
 ```
+
+NOTE: you need to add your user to the `lp` group to access the printer.
+
+<details>
+  <summary>Advanced install</summary>
+
+## Install
 
 The printer appears as `/dev/usb/lp0`, owned by `root:lp`. To print without `sudo`, add yourself to
 the `lp` group.
@@ -41,7 +47,9 @@ away without logging out, run one command at a time with `sg lp -c 'ptlabel stat
 If `/dev/usb/lp0` doesn't exist when the printer is plugged in and on, check that the `usblp` kernel
 module is loaded with `lsmod | grep usblp`, and load it with `sudo modprobe usblp`.
 
-## Use
+</details>
+
+## Useage
 
 ```sh
 ptlabel status                                   # model, tape width, errors
@@ -67,7 +75,15 @@ Tape width is read from the printer. Options for both `csv` and `images`:
 `csv` also takes `--font` (env `PTLABEL_FONT`) and `--min-length MM`. `images` takes `--rotate`
 (`auto` turns portrait images so the long side runs along the tape).
 
-## Printer protocol notes
+## Local development
+
+```sh
+uv sync
+uv run pytest
+uv run ruff check . && uv run ruff format --check .
+```
+
+## Some printer protocol notes
 
 From the [Brother raster command reference](https://download.brother.com/welcome/docp100064/cv_pte550wp750wp710bt_eng_raster_102.pdf)
 and test prints:
@@ -81,11 +97,3 @@ and test prints:
   for the printer's own status packets until every label reports printed.
 - ptouch's `print_multi()` turns auto-cut off, always sends page flag 0 and forces chain printing
   off, so ptlabel builds the sequence itself.
-
-## Develop
-
-```sh
-uv sync
-uv run pytest
-uv run ruff check . && uv run ruff format --check .
-```

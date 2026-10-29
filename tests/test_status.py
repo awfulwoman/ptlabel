@@ -27,6 +27,18 @@ def test_parse_real_packet_from_printer():
     s = parse_status(real)
     assert s.model == "PT-E550W"
     assert s.media_width_mm == 24
+    assert s.media_name == "Laminated tape"
+    assert s.tape_colour == "Yellow (Flex. ID)"
+    assert s.text_colour == "Black"
+
+
+def test_unknown_codes_still_named():
+    p = bytearray(status_packet(media=0x42))
+    p[24], p[25] = 0x77, 0x33
+    s = parse_status(bytes(p))
+    assert s.media_name == "unknown (0x42)"
+    assert s.tape_colour == "unknown (0x77)"
+    assert s.text_colour == "unknown (0x33)"
 
 
 def test_parse_errors_named():

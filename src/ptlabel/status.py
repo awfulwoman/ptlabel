@@ -20,6 +20,65 @@ ERRORS_1 = {
 ERRORS_2 = {0x01: "wrong media", 0x10: "cover open", 0x20: "overheating"}
 TAPES = {4: Tape3_5mm, 6: Tape6mm, 9: Tape9mm, 12: Tape12mm, 18: Tape18mm, 24: Tape24mm}
 
+# Reference section 4, status tables (4), (8) and (9)
+MEDIA_TYPES = {
+    0x00: "No media",
+    0x01: "Laminated tape",
+    0x03: "Non-laminated tape",
+    0x11: "Heat-shrink tube (2:1)",
+    0x17: "Heat-shrink tube (3:1)",
+    0xFF: "Incompatible tape",
+}
+TAPE_COLOURS = {
+    0x01: "White",
+    0x02: "Other",
+    0x03: "Clear",
+    0x04: "Red",
+    0x05: "Blue",
+    0x06: "Yellow",
+    0x07: "Green",
+    0x08: "Black",
+    0x09: "Clear (white text)",
+    0x20: "Matte White",
+    0x21: "Matte Clear",
+    0x22: "Matte Silver",
+    0x23: "Satin Gold",
+    0x24: "Satin Silver",
+    0x30: "Blue (D)",
+    0x31: "Red (D)",
+    0x40: "Fluorescent Orange",
+    0x41: "Fluorescent Yellow",
+    0x50: "Berry Pink (S)",
+    0x51: "Light Gray (S)",
+    0x52: "Lime Green (S)",
+    0x60: "Yellow (F)",
+    0x61: "Pink (F)",
+    0x62: "Blue (F)",
+    0x70: "White (heat-shrink tube)",
+    0x90: "White (Flex. ID)",
+    0x91: "Yellow (Flex. ID)",
+    0xF0: "Cleaning",
+    0xF1: "Stencil",
+    0xFF: "Incompatible",
+}
+TEXT_COLOURS = {
+    0x01: "White",
+    0x02: "Other",
+    0x04: "Red",
+    0x05: "Blue",
+    0x08: "Black",
+    0x0A: "Gold",
+    0x62: "Blue (F)",
+    0xF0: "Cleaning",
+    0xF1: "Stencil",
+    0xFF: "Incompatible",
+}
+
+
+def _name(table: dict[int, str], code: int) -> str:
+    return table.get(code, f"unknown ({code:#04x})")
+
+
 REPLY, PRINT_COMPLETE, ERROR, TURNED_OFF = 0x00, 0x01, 0x02, 0x04
 
 
@@ -35,6 +94,12 @@ class Status:
     status_type: int
     phase: int
     errors: list[str] = field(default_factory=list)
+    tape_colour: str = ""
+    text_colour: str = ""
+
+    @property
+    def media_name(self) -> str:
+        return _name(MEDIA_TYPES, self.media_type)
 
 
 def parse_status(packet: bytes) -> Status:
@@ -49,6 +114,8 @@ def parse_status(packet: bytes) -> Status:
         status_type=packet[18],
         phase=packet[19],
         errors=errors,
+        tape_colour=_name(TAPE_COLOURS, packet[24]),
+        text_colour=_name(TEXT_COLOURS, packet[25]),
     )
 
 

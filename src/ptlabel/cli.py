@@ -149,7 +149,9 @@ def _status(args) -> int:
         s = query_status(conn)
     finally:
         conn.close()
-    print(f"{s.model}: {s.media_width_mm}mm tape, media type {s.media_type:#04x}")
+    print(f"{s.model}: {s.media_width_mm}mm {s.media_name}")
+    print(f"tape colour: {s.tape_colour}")
+    print(f"text colour: {s.text_colour}")
     print("errors: " + (", ".join(s.errors) or "none"))
     return 0
 

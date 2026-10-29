@@ -85,7 +85,10 @@ def test_status_command(monkeypatch, capsys):
     conn = MemoryConnection([status_packet(width=18)])
     monkeypatch.setattr(cli, "DeviceConnection", lambda path: conn)
     assert cli.main(["status"]) == 0
-    assert "18mm" in capsys.readouterr().out
+    out = capsys.readouterr().out
+    assert "18mm Laminated tape" in out
+    assert "tape colour: White" in out
+    assert "text colour: Black" in out
 
 
 def test_permission_error_is_explained(tmp_path, capsys):

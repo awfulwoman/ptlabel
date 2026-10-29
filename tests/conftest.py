@@ -37,4 +37,5 @@ def status_packet(*, status_type=0x00, width=24, media=0x01, err1=0, err2=0, pha
     p[0:6] = b"\x80\x20B0f0"
     p[8], p[9], p[10], p[11] = err1, err2, width, media
     p[18], p[19] = status_type, phase
+    p[24], p[25] = 0x01, 0x08  # white tape, black text
     return bytes(p)

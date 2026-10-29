@@ -16,8 +16,30 @@ reading, CSV text rendering and image dithering.
 uv tool install git+https://github.com/awfulwoman/ptlabel
 ```
 
-The printer appears as `/dev/usb/lp0` (owned by `root:lp`). Add yourself to the `lp` group and log in
-again, or run with `sudo`.
+The printer appears as `/dev/usb/lp0`, owned by `root:lp`. To print without `sudo`, add yourself to
+the `lp` group.
+
+### Ubuntu and Fedora
+
+The command is the same on both:
+
+```sh
+sudo usermod -aG lp "$USER"
+```
+
+Log out and in again (or open a new SSH session), then check:
+
+```sh
+id -nG          # should include lp
+ptlabel status
+```
+
+A running process keeps the groups it started with. Terminals inside an existing tmux or other
+multiplexer session won't see the change until that session is restarted. To use the group straight
+away without logging out, run one command at a time with `sg lp -c 'ptlabel status'`.
+
+If `/dev/usb/lp0` doesn't exist when the printer is plugged in and on, check that the `usblp` kernel
+module is loaded with `lsmod | grep usblp`, and load it with `sudo modprobe usblp`.
 
 ## Use
 

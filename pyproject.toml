@@ -1,0 +1,31 @@
+[project]
+name = "ptlabel"
+version = "0.1.0"
+description = "Batch-print CSV rows and images to a Brother PT-E550W label printer with no wasted tape between labels"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "ptouch>=1.1.0,<1.2",
+    "pillow>=11",
+    "packbits>=0.6",
+    "pyusb>=1.2",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "ruff>=0.6",
+]
+
+[project.scripts]
+ptlabel = "ptlabel.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100

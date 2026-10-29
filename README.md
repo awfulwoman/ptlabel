@@ -1,5 +1,7 @@
 # PT label
 
+<img src="docs/tina-label.jpg" align="right" width="190" alt="A dithered image of Tina Belcher printed on yellow 24mm label tape">
+
 Batch-print CSV rows and images to Brother PT-E550W/P750W label printers as **one job**, so the
 printer doesn't waste a space on every label by printing the little human-friendly leader gap.
 

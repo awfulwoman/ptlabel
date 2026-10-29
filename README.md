@@ -10,7 +10,7 @@ Built on [ptouch](https://pypi.org/project/ptouch/) for tape geometry and raster
 the multi-label job sequence verified on real hardware, a `/dev/usb/lp0` connection, status/progress
 reading, CSV text rendering and image dithering.
 
-## Install
+## Quick Install
 
 ```sh
 uv tool install git+https://github.com/awfulwoman/ptlabel

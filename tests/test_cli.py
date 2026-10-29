@@ -91,6 +91,20 @@ def test_status_command(monkeypatch, capsys):
     assert "text colour: Black" in out
 
 
+def test_tape_rejected_for_real_print(monkeypatch, csvfile, capsys):
+    conn = MemoryConnection([status_packet(width=24)])
+    monkeypatch.setattr(cli, "DeviceConnection", lambda path: conn)
+    assert cli.main(["csv", str(csvfile), "--tape", "12"]) == 1
+    assert "--tape" in capsys.readouterr().err
+    assert conn.written == b""  # nothing sent to the printer
+
+
+def test_tape_allowed_with_preview_only(tmp_path, csvfile):
+    prev = tmp_path / "prev"
+    assert cli.main(["csv", str(csvfile), "--tape", "12", "--preview", str(prev)]) == 0
+    assert Image.open(prev / "0001.png").height == 70  # 12mm print area
+
+
 def test_permission_error_is_explained(tmp_path, capsys):
     dev = tmp_path / "lp0"
     dev.write_bytes(b"")

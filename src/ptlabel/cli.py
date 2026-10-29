@@ -27,7 +27,10 @@ def _parser() -> argparse.ArgumentParser:
 
     job = argparse.ArgumentParser(add_help=False, parents=[common])
     job.add_argument(
-        "--tape", choices=TAPE_CHOICES, help="tape width in mm (default: ask the printer)"
+        "--tape",
+        choices=TAPE_CHOICES,
+        help="dry runs only: tape width in mm to lay out for (default 24); "
+        "real prints always use the tape the printer reports",
     )
     job.add_argument(
         "--cut",
@@ -52,7 +55,7 @@ def _parser() -> argparse.ArgumentParser:
         help="leave the last label in the printer so the next job wastes no leader",
     )
     job.add_argument("--output", help="dry run: write the raster job to this file")
-    job.add_argument("--preview", help="save each label as a PNG in this directory")
+    job.add_argument("--preview", help="dry run: save each label as a PNG in this directory")
     job.add_argument("--no-wait", action="store_true", help="don't wait for the printer to finish")
 
     p = argparse.ArgumentParser(prog="ptlabel", description=__doc__)
@@ -98,14 +101,22 @@ def _images(args, height: int) -> list[Image.Image]:
 
 
 def _print(args) -> int:
-    dry_run = args.output is not None
-    conn = FileConnection(args.output) if dry_run else DeviceConnection(args.printer)
+    dry_run = args.output is not None or args.preview is not None
+    if args.tape and not dry_run:
+        print(
+            "error: --tape only applies to dry runs (--output/--preview); "
+            "real prints use the tape the printer reports",
+            file=sys.stderr,
+        )
+        return 1
+    if dry_run:
+        conn = FileConnection(args.output or os.devnull)
+    else:
+        conn = DeviceConnection(args.printer)
     conn.connect()
     try:
-        if args.tape:
-            tape = TAPES[TAPE_CHOICES[args.tape]]()
-        elif dry_run:
-            tape = TAPES[24]()
+        if dry_run:
+            tape = TAPES[TAPE_CHOICES[args.tape or "24"]]()
         else:
             tape = tape_for_status(query_status(conn))
 
@@ -127,7 +138,8 @@ def _print(args) -> int:
             chain=args.chain,
         )
         if dry_run:
-            print(f"wrote {len(images)} labels to {args.output}", file=sys.stderr)
+            dest = " and ".join(d for d in (args.output, args.preview) if d)
+            print(f"dry run: wrote {len(images)} labels to {dest}", file=sys.stderr)
         elif not args.no_wait:
             wait_for_completion(
                 conn,

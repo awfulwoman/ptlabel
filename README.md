@@ -38,8 +38,8 @@ Tape width is read from the printer. Options for both `csv` and `images`:
 | `--margin MM` | `2` | blank tape either side of each label (minimum 2) |
 | `--chain` | off | leave the last label in the printer; the next job pushes it out instead of wasting a new leader. Use for every job of a run except the last |
 | `--output FILE` | | dry run: write the raster job to a file |
-| `--preview DIR` | | save each label as a PNG |
-| `--tape MM` | from printer | 3.5, 6, 9, 12, 18 or 24 |
+| `--preview DIR` | | dry run: save each label as a PNG |
+| `--tape MM` | `24` | dry runs only: tape width to lay out for (3.5, 6, 9, 12, 18 or 24). Real prints always use the tape the printer reports |
 | `--printer PATH` | `/dev/usb/lp0` | or env `PTLABEL_PRINTER` |
 
 `csv` also takes `--font` (env `PTLABEL_FONT`) and `--min-length MM`. `images` takes `--rotate`
